@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Mic, Upload, FileAudio, Play, Pause, RotateCcw, Zap, Leaf, Activity, TrendingUp, CheckCircle, AlertCircle } from "lucide-react";
 
 function App() {
   const [audio, setAudio] = useState(null);
@@ -235,619 +236,379 @@ function App() {
   };
 
   const getEmissionColor = (emission) => {
-    if (emission < 1) return '#22c55e'; // Green
+    if (emission < 1) return '#10b981'; // Green
     if (emission < 5) return '#f59e0b'; // Yellow
     if (emission < 10) return '#f97316'; // Orange
     return '#ef4444'; // Red
   };
 
+  const getEmissionLevel = (emission) => {
+    if (emission < 1) return 'Low';
+    if (emission < 5) return 'Moderate';
+    if (emission < 10) return 'High';
+    return 'Very High';
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-      padding: '2rem 1rem'
-    }}>
-      {/* Animated Background */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%)',
-        zIndex: -1
-      }} />
-      
-      {/* Glass Container */}
-      <div style={{
-        maxWidth: '900px',
-        margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '24px',
-        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        overflow: 'hidden'
-      }}>
-        {/* Header */}
-        <div style={{
-          background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-          padding: '2rem',
-          textAlign: 'center',
-          color: 'white',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '-50%',
-            left: '-50%',
-            width: '200%',
-            height: '200%',
-            background: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)',
-            animation: 'slide 20s linear infinite'
-          }} />
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <h1 style={{
-              fontSize: '3rem',
-              fontWeight: '800',
-              margin: '0 0 0.5rem 0',
-              textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-              background: 'linear-gradient(45deg, #ffffff, #f0f9ff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              🌍 EcoTracker
-            </h1>
-            <p style={{
-              fontSize: '1.2rem',
-              margin: 0,
-              opacity: 0.9,
-              fontWeight: '400'
-            }}>
-              AI-Powered Carbon Footprint Analysis
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
+                <Leaf className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">EcoTracker</h1>
+                <p className="text-sm text-gray-500">Carbon Footprint Analyzer</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button className="text-gray-500 hover:text-gray-700">
+                <Activity className="w-5 h-5" />
+              </button>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                View Reports
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
-        <div style={{ padding: '2rem' }}>
-          {/* Mode Selection */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginBottom: '2rem',
-            gap: '1rem'
-          }}>
-            {[
-              { value: 'live', label: '🎤 Record Live', icon: '🎙️' },
-              { value: 'file', label: '📁 Upload File', icon: '📎' }
-            ].map((mode) => (
-              <button
-                key={mode.value}
-                onClick={() => setRecordingMode(mode.value)}
-                style={{
-                  padding: '1rem 2rem',
-                  border: 'none',
-                  borderRadius: '50px',
-                  background: recordingMode === mode.value 
-                    ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
-                    : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                  color: recordingMode === mode.value ? 'white' : '#64748b',
-                  fontSize: '1.1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: recordingMode === mode.value 
-                    ? '0 10px 25px rgba(59, 130, 246, 0.4)'
-                    : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  transform: recordingMode === mode.value ? 'translateY(-2px)' : 'translateY(0)'
-                }}
-              >
-                {mode.icon} {mode.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Live Recording Mode */}
-          {recordingMode === 'live' && (
-            <div style={{
-              background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                marginBottom: '1.5rem',
-                color: '#1e293b',
-                textAlign: 'center'
-              }}>
-                🎙️ Voice Recording Studio
-              </h3>
-              
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1.5rem'
-              }}>
-                {/* Recording Button */}
-                <div style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {isRecording && (
-                    <div style={{
-                      position: 'absolute',
-                      width: '120px',
-                      height: '120px',
-                      borderRadius: '50%',
-                      background: `conic-gradient(from 0deg, #ef4444 0deg, #ef4444 ${audioLevel * 360}deg, transparent ${audioLevel * 360}deg)`,
-                      animation: 'pulse 2s infinite',
-                      zIndex: 1
-                    }} />
-                  )}
-                  
-                  <button
-                    onClick={isRecording ? stopRecording : startRecording}
-                    disabled={loading}
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      borderRadius: '50%',
-                      border: 'none',
-                      background: isRecording 
-                        ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                        : 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-                      color: 'white',
-                      fontSize: '2rem',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: isRecording 
-                        ? '0 0 40px rgba(239, 68, 68, 0.6)'
-                        : '0 10px 30px rgba(34, 197, 94, 0.4)',
-                      transform: isRecording ? 'scale(1.1)' : 'scale(1)',
-                      zIndex: 2,
-                      position: 'relative'
-                    }}
-                  >
-                    {isRecording ? '⏹️' : '🎤'}
-                  </button>
-                </div>
-                
-                {/* Recording Stats */}
-                {isRecording && (
-                  <div style={{
-                    textAlign: 'center',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    borderRadius: '15px',
-                    padding: '1rem 2rem',
-                    border: '2px solid rgba(239, 68, 68, 0.2)'
-                  }}>
-                    <div style={{
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      color: '#ef4444',
-                      marginBottom: '0.5rem'
-                    }}>
-                      {formatTime(recordingTime)}
-                    </div>
-                    <div style={{
-                      fontSize: '1rem',
-                      color: '#64748b',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem'
-                    }}>
-                      <span style={{
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        background: '#ef4444',
-                        animation: 'blink 1s infinite'
-                      }} />
-                      Recording in progress...
-                    </div>
-                  </div>
-                )}
-                
-                {/* Instructions */}
-                <div style={{
-                  textAlign: 'center',
-                  color: '#64748b',
-                  fontSize: '1rem',
-                  maxWidth: '400px',
-                  lineHeight: '1.6'
-                }}>
-                  {isRecording ? (
-                    <p>🗣️ <strong>Speak clearly</strong> about your daily activities for accurate carbon footprint analysis</p>
-                  ) : (
-                    <p>🎯 Click the microphone to start recording your daily activities</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* File Upload Mode */}
-          {recordingMode === 'file' && (
-            <div style={{
-              background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                marginBottom: '1.5rem',
-                color: '#1e293b',
-                textAlign: 'center'
-              }}>
-                📁 Upload Audio File
-              </h3>
-              
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1.5rem'
-              }}>
-                <div style={{
-                  width: '100%',
-                  maxWidth: '400px',
-                  border: '2px dashed #cbd5e1',
-                  borderRadius: '15px',
-                  padding: '2rem',
-                  textAlign: 'center',
-                  background: 'rgba(255, 255, 255, 0.5)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer'
-                }}>
-                  <input
-                    type="file"
-                    accept="audio/*"
-                    onChange={handleFileChange}
-                    style={{
-                      position: 'absolute',
-                      opacity: 0,
-                      width: '100%',
-                      height: '100%',
-                      cursor: 'pointer'
-                    }}
-                  />
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📎</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1e293b', marginBottom: '0.5rem' }}>
-                    {audio ? audio.name : 'Choose Audio File'}
-                  </div>
-                  <div style={{ fontSize: '0.9rem', color: '#64748b' }}>
-                    Support MP3, WAV, M4A, OGG, FLAC
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleFileSubmit}
-                  disabled={loading || !audio}
-                  style={{
-                    padding: '1rem 2rem',
-                    borderRadius: '50px',
-                    border: 'none',
-                    background: loading || !audio 
-                      ? 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)'
-                      : 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                    color: loading || !audio ? '#94a3b8' : 'white',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    cursor: loading || !audio ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: loading || !audio 
-                      ? 'none'
-                      : '0 10px 25px rgba(59, 130, 246, 0.4)',
-                    transform: loading || !audio ? 'none' : 'translateY(-2px)'
-                  }}
-                >
-                  {loading ? '⏳ Processing...' : '🚀 Analyze Audio'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Loading Animation */}
-          {loading && (
-            <div style={{
-              background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-              borderRadius: '20px',
-              padding: '2rem',
-              marginBottom: '2rem',
-              textAlign: 'center',
-              border: '1px solid rgba(59, 130, 246, 0.2)'
-            }}>
-              <div style={{
-                display: 'inline-block',
-                width: '60px',
-                height: '60px',
-                border: '6px solid #e2e8f0',
-                borderTop: '6px solid #3b82f6',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-                marginBottom: '1rem'
-              }} />
-              <div style={{
-                fontSize: '1.3rem',
-                fontWeight: '600',
-                color: '#1e40af',
-                marginBottom: '0.5rem'
-              }}>
-                🧠 AI Analysis in Progress
-              </div>
-              <div style={{
-                fontSize: '1rem',
-                color: '#64748b'
-              }}>
-                Processing your audio for carbon footprint insights...
-              </div>
-            </div>
-          )}
-
-          {/* Error Display */}
-          {error && (
-            <div style={{
-              background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-              borderRadius: '20px',
-              padding: '1.5rem',
-              marginBottom: '2rem',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem'
-            }}>
-              <div style={{
-                fontSize: '2rem',
-                flexShrink: 0
-              }}>⚠️</div>
-              <div>
-                <div style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '600',
-                  color: '#dc2626',
-                  marginBottom: '0.5rem'
-                }}>
-                  Oops! Something went wrong
-                </div>
-                <div style={{
-                  fontSize: '1rem',
-                  color: '#7f1d1d'
-                }}>
-                  {error}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Results Display */}
-          {showResults && result && (
-            <div style={{
-              background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-              borderRadius: '20px',
-              padding: '2rem',
-              border: '1px solid rgba(34, 197, 94, 0.2)',
-              animation: 'slideUp 0.5s ease-out'
-            }}>
-              <h3 style={{
-                fontSize: '1.8rem',
-                fontWeight: '700',
-                marginBottom: '1.5rem',
-                color: '#14532d',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem'
-              }}>
-                🎯 Analysis Results
-              </h3>
-
-              {/* Transcription */}
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.8)',
-                borderRadius: '15px',
-                padding: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '1px solid rgba(34, 197, 94, 0.1)'
-              }}>
-                <h4 style={{
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  color: '#14532d',
-                  marginBottom: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}>
-                  📝 Transcription
-                </h4>
-                <p style={{
-                  fontSize: '1rem',
-                  lineHeight: '1.6',
-                  color: result.transcription === "No speech detected" ? '#64748b' : '#1e293b',
-                  fontStyle: result.transcription === "No speech detected" ? 'italic' : 'normal',
-                  margin: 0
-                }}>
-                  {result.transcription || "No transcription available"}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            {/* Hero Section */}
+            <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Track your carbon footprint
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Our mission is to make people realize that there is no <span className="text-green-600 font-semibold">Earth B</span>
                 </p>
               </div>
 
-              {/* Activities & Emissions */}
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.8)',
-                borderRadius: '15px',
-                padding: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '1px solid rgba(34, 197, 94, 0.1)'
-              }}>
-                <h4 style={{
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  color: '#14532d',
-                  marginBottom: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem'
-                }}>
-                  📊 Activities & Emissions
-                </h4>
-                
-                {result.emissions && Array.isArray(result.emissions) && result.emissions.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {result.emissions.map((item, idx) => (
-                      <div key={idx} style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '1rem',
-                        background: 'rgba(255, 255, 255, 0.6)',
-                        borderRadius: '10px',
-                        border: '1px solid rgba(34, 197, 94, 0.1)',
-                        transition: 'all 0.3s ease'
-                      }}>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.8rem'
-                        }}>
-                          <div style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: getEmissionColor(item?.emission || 0)
-                          }} />
-                          <span style={{
-                            fontSize: '1rem',
-                            fontWeight: '500',
-                            color: '#1e293b'
-                          }}>
-                            {item?.activity || "Unknown activity"}
-                          </span>
-                        </div>
-                        <div style={{
-                          fontSize: '1.1rem',
-                          fontWeight: '700',
-                          color: getEmissionColor(item?.emission || 0),
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem'
-                        }}>
-                          {item?.emission || 0} <span style={{ fontSize: '0.9rem' }}>kg CO₂e</span>
-                        </div>
-                      </div>
-                    ))}
+              <div className="flex justify-center mb-8">
+                <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center">
+                    <Leaf className="w-12 h-12 text-white" />
                   </div>
-                ) : (
-                  <div style={{
-                    textAlign: 'center',
-                    color: '#64748b',
-                    fontStyle: 'italic',
-                    padding: '2rem'
-                  }}>
-                    No emissions data available
-                  </div>
-                )}
+                </div>
               </div>
 
-              {/* Total Emissions */}
-              {result.emissions && Array.isArray(result.emissions) && result.emissions.length > 0 && (
-                <div style={{
-                  background: `linear-gradient(135deg, ${getEmissionColor(getTotalEmissions())}20 0%, ${getEmissionColor(getTotalEmissions())}10 100%)`,
-                  borderRadius: '15px',
-                  padding: '2rem',
-                  textAlign: 'center',
-                  border: `2px solid ${getEmissionColor(getTotalEmissions())}40`
-                }}>
-                  <h4 style={{
-                    fontSize: '1.3rem',
-                    fontWeight: '600',
-                    color: '#1e293b',
-                    marginBottom: '1rem'
-                  }}>
-                    🌍 Total Carbon Footprint
-                  </h4>
-                  <div style={{
-                    fontSize: '3rem',
-                    fontWeight: '800',
-                    color: getEmissionColor(getTotalEmissions()),
-                    marginBottom: '0.5rem'
-                  }}>
-                    {getTotalEmissions().toFixed(2)}
+              <div className="text-center">
+                <p className="text-gray-600 mb-6">How it works</p>
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">1</span>
+                    </div>
+                    <span className="text-sm text-gray-600">Input</span>
                   </div>
-                  <div style={{
-                    fontSize: '1.2rem',
-                    color: '#64748b',
-                    fontWeight: '500'
-                  }}>
-                    kg CO₂e
+                  <div className="hidden sm:block w-12 h-px bg-gray-300"></div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">2</span>
+                    </div>
+                    <span className="text-sm text-gray-600">Track</span>
                   </div>
+                  <div className="hidden sm:block w-12 h-px bg-gray-300"></div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">3</span>
+                    </div>
+                    <span className="text-sm text-gray-600">Improve</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recording Interface */}
+            <div className="bg-white rounded-2xl shadow-sm p-8">
+              <div className="flex items-center justify-center mb-8">
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setRecordingMode('live')}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      recordingMode === 'live'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Mic className="w-4 h-4" />
+                    <span>Record Live</span>
+                  </button>
+                  <button
+                    onClick={() => setRecordingMode('file')}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      recordingMode === 'file'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload File</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Live Recording */}
+              {recordingMode === 'live' && (
+                <div className="text-center">
+                  <div className="mb-8">
+                    <div className="relative inline-block">
+                      {isRecording && (
+                        <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75"></div>
+                      )}
+                      <button
+                        onClick={isRecording ? stopRecording : startRecording}
+                        disabled={loading}
+                        className={`relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-200 ${
+                          isRecording
+                            ? 'bg-red-500 hover:bg-red-600 text-white'
+                            : 'bg-green-600 hover:bg-green-700 text-white'
+                        } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {isRecording ? (
+                          <div className="w-6 h-6 bg-white rounded-sm"></div>
+                        ) : (
+                          <Mic className="w-8 h-8" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {isRecording && (
+                    <div className="mb-8">
+                      <div className="text-2xl font-mono font-bold text-gray-900 mb-2">
+                        {formatTime(recordingTime)}
+                      </div>
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-gray-600">Recording...</span>
+                      </div>
+                      <div className="mt-4 max-w-xs mx-auto">
+                        <div className="bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full transition-all duration-100"
+                            style={{ width: `${audioLevel * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-gray-600">
+                    {isRecording 
+                      ? "Speak clearly about your daily activities..."
+                      : "Click the microphone to start recording"
+                    }
+                  </p>
+                </div>
+              )}
+
+              {/* File Upload */}
+              {recordingMode === 'file' && (
+                <div className="text-center">
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 mb-6 hover:border-green-500 transition-colors">
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="audio-upload"
+                    />
+                    <label htmlFor="audio-upload" className="cursor-pointer">
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                          <FileAudio className="w-8 h-8 text-gray-600" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-medium text-gray-900">
+                            {audio ? audio.name : "Choose audio file"}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            MP3, WAV, M4A, OGG, FLAC up to 50MB
+                          </p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                  
+                  <button
+                    onClick={handleFileSubmit}
+                    disabled={loading || !audio}
+                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      loading || !audio
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-green-600 text-white hover:bg-green-700'
+                    }`}
+                  >
+                    {loading ? 'Processing...' : 'Analyze Audio'}
+                  </button>
                 </div>
               )}
             </div>
-          )}
+
+            {/* Loading State */}
+            {loading && (
+              <div className="bg-white rounded-2xl shadow-sm p-8 mt-8">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-4"></div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Analyzing your audio...
+                  </h3>
+                  <p className="text-gray-600">
+                    Our AI is processing your data to calculate carbon emissions
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mt-8">
+                <div className="flex items-center space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-medium text-red-800">Error</h3>
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Results */}
+            {showResults && result && (
+              <div className="bg-white rounded-2xl shadow-sm p-8 mt-8">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Analysis Complete</h3>
+                  <p className="text-gray-600">Here's your carbon footprint breakdown</p>
+                </div>
+
+                {/* Transcription */}
+                <div className="bg-gray-50 rounded-xl p-6 mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Transcription</h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    {result.transcription || "No transcription available"}
+                  </p>
+                </div>
+
+                {/* Emissions Breakdown */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-6">Emissions Breakdown</h4>
+                  {result.emissions && Array.isArray(result.emissions) && result.emissions.length > 0 ? (
+                    <div className="space-y-4">
+                      {result.emissions.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                          <div className="flex items-center space-x-3">
+                            <div 
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: getEmissionColor(item?.emission || 0) }}
+                            ></div>
+                            <span className="font-medium text-gray-900">
+                              {item?.activity || "Unknown activity"}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold text-gray-900">
+                              {item?.emission || 0} kg CO₂e
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {getEmissionLevel(item?.emission || 0)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No emissions data available
+                    </div>
+                  )}
+                </div>
+
+                {/* Total Emissions */}
+                {result.emissions && Array.isArray(result.emissions) && result.emissions.length > 0 && (
+                  <div className="bg-green-50 rounded-xl p-6 text-center">
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      Total Carbon Footprint
+                    </h4>
+                    <div className="text-4xl font-bold text-green-600 mb-2">
+                      {getTotalEmissions().toFixed(2)}
+                    </div>
+                    <div className="text-lg text-gray-600">kg CO₂e</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Stats */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Daily Average</span>
+                  <span className="font-semibold text-gray-900">2.4 kg CO₂e</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">This Month</span>
+                  <span className="font-semibold text-gray-900">72.1 kg CO₂e</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Goal Progress</span>
+                  <span className="font-semibold text-green-600">85%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tips */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Tips</h3>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-3 h-3 text-green-600" />
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Use public transport to reduce emissions by 45%
+                  </p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Leaf className="w-3 h-3 text-green-600" />
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Choose plant-based meals 3 times a week
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Achievement */}
+            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 text-white">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Good Choice!</h3>
+                <p className="text-sm opacity-90">
+                  You've reduced your carbon footprint by 12% this week
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* CSS Animations */}
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        @keyframes slideUp {
-          from { 
-            transform: translateY(20px); 
-            opacity: 0; 
-          }
-          to { 
-            transform: translateY(0); 
-            opacity: 1; 
-          }
-        }
-        @keyframes slide {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-          .container {
-            padding: 1rem;
-          }
-          .header h1 {
-            font-size: 2rem;
-          }
-          .mode-buttons {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-          .recording-studio {
-            padding: 1.5rem;
-          }
-        }
-      `}</style>
     </div>
   );
 }
