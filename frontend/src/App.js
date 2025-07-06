@@ -11,7 +11,10 @@ function App() {
   const [recordingMode, setRecordingMode] = useState('live');
   const [audioLevel, setAudioLevel] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+  const [signupType, setSignupType] = useState('individual'); // 'individual' or 'business'
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const streamRef = useRef(null);
@@ -249,6 +252,25 @@ function App() {
     return 'Very High';
   };
 
+  const handleAuthAction = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    }
+  };
+
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+    console.log('Auth submitted');
+    setIsAuthenticated(true);
+    setShowAuthModal(false);
+  };
+
+  const resetAuthModal = () => {
+    setAuthMode('login');
+    setSignupType('individual');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -268,9 +290,22 @@ function App() {
               <button className="text-gray-500 hover:text-gray-700">
                 <Activity className="w-5 h-5" />
               </button>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                View Reports
-              </button>
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={handleAuthAction}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                >
+                  View Reports
+                </button>
+                {!isAuthenticated && (
+                  <button 
+                    onClick={() => setShowAuthModal(true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                  >
+                    Login/Sign Up
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -331,7 +366,7 @@ function App() {
               <div className="flex items-center justify-center mb-8">
                 <div className="flex bg-gray-100 rounded-lg p-1">
                   <button
-                    onClick={() => setRecordingMode('live')}
+                    onClick={!isAuthenticated ? handleAuthAction : () => setRecordingMode('live')}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                       recordingMode === 'live'
                         ? 'bg-white text-gray-900 shadow-sm'
@@ -342,7 +377,7 @@ function App() {
                     <span>Record Live</span>
                   </button>
                   <button
-                    onClick={() => setRecordingMode('file')}
+                    onClick={!isAuthenticated ? handleAuthAction : () => setRecordingMode('file')}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                       recordingMode === 'file'
                         ? 'bg-white text-gray-900 shadow-sm'
@@ -609,6 +644,150 @@ function App() {
           </div>
         </div>
       </div>
+      {/* Auth Modal */}
+    {showAuthModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {authMode === 'login' ? 'Login' : 'Sign Up'}
+            </h2>
+            <p className="text-gray-600">
+              {authMode === 'login' ? 'Welcome back!' : 'Join EcoTracker today'}
+            </p>
+          </div>
+
+          {authMode === 'login' ? (
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Login
+              </button>
+            </form>
+          ) : (
+            <div>
+              <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
+                <button
+                  onClick={() => setSignupType('individual')}
+                  className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
+                    signupType === 'individual'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Individual
+                </button>
+                <button
+                  onClick={() => setSignupType('business')}
+                  className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
+                    signupType === 'business'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Business
+                </button>
+              </div>
+
+              <form onSubmit={handleAuthSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {signupType === 'individual' ? 'Name' : 'Business Name'}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {signupType === 'individual' ? 'Email' : 'Business Email'}
+                  </label>
+                  <input
+                    type="email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                </div>
+                {signupType === 'business' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Contact Person Name
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Sign Up
+                </button>
+              </form>
+            </div>
+          )}
+
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+              className="text-green-600 hover:text-green-700 text-sm font-medium"
+            >
+              {authMode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Login"}
+            </button>
+          </div>
+
+          <button
+            onClick={() => {
+              setShowAuthModal(false);
+              resetAuthModal();
+            }}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            <span className="sr-only">Close</span>
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    )}
     </div>
   );
 }
