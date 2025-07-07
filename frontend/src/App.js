@@ -20,7 +20,6 @@ function App() {
     return () => window.removeEventListener("open-auth-modal", handleOpen);
   }, []);
   return (
-    
     <div className="font-sans min-h-screen bg-white">
       {/* Navbar */}
       <Navbar />
@@ -128,7 +127,10 @@ function App() {
         <p className="mb-6 text-lg">
           Join Earthprint and take your first step toward sustainability.
         </p>
-        <button className="bg-white text-green-600 font-semibold px-6 py-3 rounded hover:bg-gray-200">
+        <button
+          onClick={() => setShowAuthModal(true)}
+          className="bg-white text-green-600 font-semibold px-6 py-3 rounded hover:bg-gray-200"
+        >
           Get Started Now
         </button>
       </section>
@@ -143,7 +145,6 @@ function App() {
       <LoginSignup show={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <Footer />
     </div>
-     
   );
 }
 
